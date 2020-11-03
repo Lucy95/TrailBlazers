@@ -2,6 +2,8 @@ import {StatusBar} from 'expo-status-bar'
 import React from 'react'
 import {StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, Image} from 'react-native'
 import {Camera} from 'expo-camera'
+import * as Speech from 'expo-speech'
+
 let camera: Camera
 export default function TabOneScreen() {
   const [startCamera, setStartCamera] = React.useState(false)
@@ -25,7 +27,30 @@ export default function TabOneScreen() {
     setPreviewVisible(true)
     //setStartCamera(false)
     setCapturedImage(photo)
+    detectObject(photo);
   }
+
+  const detectObject = (photo) => {
+    fetch('https://pshackathon.herokuapp.com/detectObject',{
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body:photo
+            })
+        .then(response => {
+            if (response.status >= 400 ) {
+                Speech.speak("Erro while processing request");
+                throw new Error("Error response");
+            }
+            return response.json()
+        })
+        .then(responseJson => {
+            console.log("API CALL RESULT",responseJson);
+            Speech.speak(responseJson["result"][0]);
+        })
+  }
+
   const __savePhoto = () => {}
   const __retakePicture = () => {
     setCapturedImage(null)
