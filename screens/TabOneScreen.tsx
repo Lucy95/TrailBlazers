@@ -47,7 +47,13 @@ export default function TabOneScreen() {
         })
         .then(responseJson => {
             console.log("API CALL RESULT",responseJson);
-            Speech.speak(responseJson["result"][0]);
+            if (responseJson["result"].length > 0) {
+              for(let i = 0; i < responseJson["result"].length; i++) {
+                Speech.speak(responseJson["result"][i]);
+              }
+            } else {Speech.speak("Erro while processing request");
+            throw new Error("Error response");}
+            
         })
   }
 
