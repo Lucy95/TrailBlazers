@@ -19,19 +19,13 @@ export default function BottomTabNavigator() {
       initialRouteName="TabOne"
       tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}>
       <BottomTab.Screen
-        name="Indoor"
+        name="Home"
         component={TabOneNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
         }}
       />
-      <BottomTab.Screen
-        name="Outdoor"
-        component={TabTwoNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
-        }}
-      />
+      
     </BottomTab.Navigator>
   );
 }
@@ -52,13 +46,13 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="Indoor"
         component={TabOneScreen}
-        options={{ headerTitle: 'Indoor Mode' }}
+        options={{ headerTitle: 'TrailBlazers' }}
       />
     </TabOneStack.Navigator>
   );
 }
 
-const TabTwoStack = createStackNavigator<TabTwoParamList>();
+/*const TabTwoStack = createStackNavigator<TabTwoParamList>();
 
 function TabTwoNavigator() {
   return (
@@ -70,4 +64,4 @@ function TabTwoNavigator() {
       />
     </TabTwoStack.Navigator>
   );
-}
+}*/

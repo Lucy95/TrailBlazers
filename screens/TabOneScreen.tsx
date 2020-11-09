@@ -11,6 +11,7 @@ export default function TabOneScreen() {
   const [capturedImage, setCapturedImage] = React.useState<any>(null)
   const [cameraType, setCameraType] = React.useState(Camera.Constants.Type.back)
   const [flashMode, setFlashMode] = React.useState('off')
+  const [api, setApi] = React.useState('object')
 
   
   const __startCamera = async () => {
@@ -25,7 +26,11 @@ export default function TabOneScreen() {
     const photo: any = await camera.takePictureAsync({skipProcessing: true})
     setPreviewVisible(true)
     setCapturedImage(photo)
-    detectObject(photo)
+    if (api == 'object'){
+      detectObject(photo)
+    } else{
+      detectText(photo)
+    }
   }
 
   const detectObject = (photo) => {
@@ -51,6 +56,28 @@ export default function TabOneScreen() {
             } else {Speech.speak("Error while processing request",{onDone: complete})}
             
         })
+  }
+
+  const detectText = (photo) => {
+    fetch('https://pshackathon.herokuapp.com/detectText',{
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body:photo
+            })
+        .then(response => {
+            if (response.status >= 400 ) {
+                Speech.speak("Error while processing request", {onDone: complete})
+            }
+            return response.json()
+        })
+        .then(responseJson => {
+            console.log("API CALL RESULT",responseJson);
+            if (responseJson["result"].length > 0) {
+                Speech.speak(responseJson["result"], {onDone: complete})
+            } else {Speech.speak("Error while retrieving response", {onDone: complete})}
+        });
   }
 
   const __savePhoto = () => {}
@@ -80,6 +107,16 @@ export default function TabOneScreen() {
       Speech.speak('Processing has been completed. Please provide input for new request.')
       setStartCamera(false)
     };
+  
+  const __objectPicture = () => {
+    setApi('object')
+    __startCamera()
+  }
+
+  const __textPicture = () => {
+    setApi('text')
+    __startCamera()
+  }
 
   return (
     <View style={styles.container}>
@@ -195,7 +232,7 @@ export default function TabOneScreen() {
           }}
         >
           <TouchableOpacity
-            onPress={__startCamera}
+            onPress={__objectPicture}
             style={{
               width: 300,
               borderRadius: 4,
@@ -215,12 +252,12 @@ export default function TabOneScreen() {
                 textAlign: 'center'
               }}
             >
-              Take picture
+              Detect Object
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={__startCamera}
+            onPress={__textPicture}
             style={{
               width: 300,
               borderRadius: 4,
@@ -240,7 +277,7 @@ export default function TabOneScreen() {
                 textAlign: 'center'
               }}
             >
-              Take picture
+              Detect Text
             </Text>
           </TouchableOpacity>
         </View>
