@@ -12,9 +12,9 @@ export default function TabOneScreen() {
   const [cameraType, setCameraType] = React.useState(Camera.Constants.Type.back)
   const [flashMode, setFlashMode] = React.useState('off')
 
+  
   const __startCamera = async () => {
     const {status} = await Camera.requestPermissionsAsync()
-    console.log(status)
     if (status === 'granted') {
       setStartCamera(true)
     } else {
@@ -22,12 +22,10 @@ export default function TabOneScreen() {
     }
   }
   const __takePicture = async () => {
-    const photo: any = await camera.takePictureAsync()
-    console.log(photo)
+    const photo: any = await camera.takePictureAsync({skipProcessing: true})
     setPreviewVisible(true)
-    //setStartCamera(false)
     setCapturedImage(photo)
-    detectObject(photo);
+    detectObject(photo)
   }
 
   const detectObject = (photo) => {
@@ -40,8 +38,7 @@ export default function TabOneScreen() {
             })
         .then(response => {
             if (response.status >= 400 ) {
-                Speech.speak("Erro while processing request");
-                throw new Error("Error response");
+                Speech.speak("Error while processing request", {onDone: complete})
             }
             return response.json()
         })
@@ -49,10 +46,9 @@ export default function TabOneScreen() {
             console.log("API CALL RESULT",responseJson);
             if (responseJson["result"].length > 0) {
               for(let i = 0; i < responseJson["result"].length; i++) {
-                Speech.speak(responseJson["result"][i]);
+                Speech.speak(responseJson["result"][i],{onDone: complete});
               }
-            } else {Speech.speak("Erro while processing request");
-            throw new Error("Error response");}
+            } else {Speech.speak("Error while processing request",{onDone: complete})}
             
         })
   }
@@ -79,6 +75,12 @@ export default function TabOneScreen() {
       setCameraType('back')
     }
   }
+
+  const complete = () => {
+      Speech.speak('Processing has been completed. Please provide input for new request.')
+      setStartCamera(false)
+    };
+
   return (
     <View style={styles.container}>
       {startCamera ? (
@@ -188,26 +190,53 @@ export default function TabOneScreen() {
           style={{
             flex: 1,
             backgroundColor: '#fff',
-            justifyContent: 'center',
-            alignItems: 'center'
+            justifyContent:'center',
+            alignItems:'center'
           }}
         >
           <TouchableOpacity
             onPress={__startCamera}
             style={{
-              width: 130,
+              width: 300,
               borderRadius: 4,
               backgroundColor: '#14274e',
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              height: 40
+              height: 100,
+              marginBottom: '50%'
             }}
           >
             <Text
               style={{
                 color: '#fff',
                 fontWeight: 'bold',
+                fontSize:40,
+                textAlign: 'center'
+              }}
+            >
+              Take picture
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={__startCamera}
+            style={{
+              width: 300,
+              borderRadius: 4,
+              backgroundColor: '#14274e',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 100,
+              marginTop: '10%'
+            }}
+          >
+            <Text
+              style={{
+                color: '#fff',
+                fontWeight: 'bold',
+                fontSize:40,
                 textAlign: 'center'
               }}
             >
@@ -225,14 +254,11 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
+    backgroundColor: '#fff'
   }
 })
 
 const CameraPreview = ({photo, retakePicture, savePhoto}: any) => {
-  console.log('sdsfds', photo)
   return (
     <View
       style={{
