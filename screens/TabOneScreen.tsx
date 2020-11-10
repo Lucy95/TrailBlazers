@@ -43,17 +43,15 @@ export default function TabOneScreen() {
             })
         .then(response => {
             if (response.status >= 400 ) {
-                Speech.speak("Error while processing request", {onDone: complete})
+                Speech.speak("Error while processing request", ({onDone: complete},{rate:0.8}))
             }
             return response.json()
         })
         .then(responseJson => {
             console.log("API CALL RESULT",responseJson);
             if (responseJson["result"].length > 0) {
-              for(let i = 0; i < responseJson["result"].length; i++) {
-                Speech.speak(responseJson["result"][i],{onDone: complete});
-              }
-            } else {Speech.speak("Error while processing request",{onDone: complete})}
+                Speech.speak(responseJson["result"],({onDone: complete},{rate:0.8}));
+            } else {Speech.speak("Error while processing request",({onDone: complete},{rate:0.8}))}
             
         })
   }
@@ -68,7 +66,7 @@ export default function TabOneScreen() {
             })
         .then(response => {
             if (response.status >= 400 ) {
-                Speech.speak("Error while processing request", {onDone: complete})
+                Speech.speak("Error while processing request", ({onDone: complete},{rate:0.8}))
             }
             return response.json()
         })
@@ -104,7 +102,7 @@ export default function TabOneScreen() {
   }
 
   const complete = () => {
-      Speech.speak('Processing has been completed. Please provide input for new request.')
+      Speech.speak('Please provide input for new request.')
       setStartCamera(false)
     };
   
