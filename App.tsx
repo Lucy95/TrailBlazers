@@ -9,6 +9,8 @@ import * as Speech from 'expo-speech';
 
 
 export default function App() {
+
+  
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
 

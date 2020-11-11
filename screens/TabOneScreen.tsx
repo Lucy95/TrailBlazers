@@ -43,15 +43,15 @@ export default function TabOneScreen() {
             })
         .then(response => {
             if (response.status >= 400 ) {
-                Speech.speak("Error while processing request", ({onDone: complete},{rate:0.8}))
+                Speech.speak("Error while processing request",({rate:0.8, onDone: complete}))
             }
             return response.json()
         })
         .then(responseJson => {
             console.log("API CALL RESULT",responseJson);
             if (responseJson["result"].length > 0) {
-                Speech.speak(responseJson["result"],({onDone: complete},{rate:0.8}));
-            } else {Speech.speak("Error while processing request",({onDone: complete},{rate:0.8}))}
+                Speech.speak(responseJson["result"],({rate:0.8, onDone: complete}));
+            } else {Speech.speak("Error while processing request",({rate:0.8, onDone: complete}))}
             
         })
   }
@@ -66,15 +66,15 @@ export default function TabOneScreen() {
             })
         .then(response => {
             if (response.status >= 400 ) {
-                Speech.speak("Error while processing request", ({onDone: complete},{rate:0.8}))
+                Speech.speak("Error while processing request", ({rate:0.8, onDone: complete}))
             }
             return response.json()
         })
         .then(responseJson => {
             console.log("API CALL RESULT",responseJson);
             if (responseJson["result"].length > 0) {
-                Speech.speak(responseJson["result"], {onDone: complete})
-            } else {Speech.speak("Error while retrieving response", {onDone: complete})}
+                Speech.speak(responseJson["result"], ({rate:0.8, onDone: complete}))
+            } else {Speech.speak("Error while retrieving response", ({rate:0.8, onDone: complete}))}
         });
   }
 
@@ -102,8 +102,9 @@ export default function TabOneScreen() {
   }
 
   const complete = () => {
-      Speech.speak('Please provide input for new request.')
-      setStartCamera(false)
+    setStartCamera(false)
+    Speech.speak('Please provide input for new request.')
+      
     };
   
   const __objectPicture = () => {
@@ -128,7 +129,7 @@ export default function TabOneScreen() {
           {previewVisible && capturedImage ? (
             <CameraPreview photo={capturedImage} savePhoto={__savePhoto} retakePicture={__retakePicture} />
           ) : (
-            <Camera
+            <Camera useCamera2Api={true}
               type={cameraType}
               flashMode={flashMode}
               style={{flex: 1}}
@@ -136,7 +137,7 @@ export default function TabOneScreen() {
                 camera = r
               }}
             >
-              <View
+              <View 
                 style={{
                   flex: 1,
                   width: '100%',
@@ -221,7 +222,7 @@ export default function TabOneScreen() {
           )}
         </View>
       ) : (
-        <View
+        <View accessible={true}
           style={{
             flex: 1,
             backgroundColor: '#fff',
